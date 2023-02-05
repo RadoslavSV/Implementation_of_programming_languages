@@ -37,6 +37,15 @@ void assert(int condition, const char* message) {
     }
 }
 
+VM* newVM() {
+    VM* vm = malloc(sizeof(VM));
+    vm->stackSize = 0;
+    vm->firstObject = NULL;
+    vm->numObjects = 0;
+    vm->maxObjects = INIT_OBJ_NUM_MAX;
+    return vm;
+}
+
 int main(int argc, const char * argv[]) {
 
     // TO DO
