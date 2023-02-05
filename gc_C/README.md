@@ -1,1 +1,1 @@
-Implement a garbage collector algorithm in C.
+Implement a simple garbage collector algorithm in C.
