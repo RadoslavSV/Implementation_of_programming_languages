@@ -46,6 +46,16 @@ VM* newVM() {
     return vm;
 }
 
+void push(VM* vm, Object* value) {
+    assert(vm->stackSize < MAX_STACK, "Stack overflow!");
+    vm->stack[vm->stackSize++] = value;
+}
+
+Object* pop(VM* vm) {
+    assert(vm->stackSize > 0, "Stack underflow!");
+    return vm->stack[--vm->stackSize];
+}
+
 int main(int argc, const char * argv[]) {
 
     // TO DO
