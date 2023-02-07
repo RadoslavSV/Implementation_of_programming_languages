@@ -88,6 +88,25 @@ void sweep(VM* vm) {
     }
 }
 
+void gc(VM* vm) {
+    int numObjects = vm->numObjects;
+    markAll(vm);
+    sweep(vm);
+    vm->maxObjects = (vm->numObjects == 0 ? INIT_OBJ_NUM_MAX : vm->numObjects * 2);
+    printf("Collected %d objects, %d remaining.\n", numObjects - vm->numObjects, vm->numObjects);
+}
+
+Object* newObject(VM* vm, ObjectType type) {
+    if (vm->numObjects == vm->maxObjects) gc(vm);
+    Object* object = malloc(sizeof(Object));
+    object->type = type;
+    object->next = vm->firstObject;
+    vm->firstObject = object;
+    object->marked = 0;
+    vm->numObjects++;
+    return object;
+}
+
 int main(int argc, const char * argv[]) {
 
     // TO DO
