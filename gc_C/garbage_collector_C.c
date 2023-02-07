@@ -107,6 +107,41 @@ Object* newObject(VM* vm, ObjectType type) {
     return object;
 }
 
+void pushInt(VM* vm, int initValue) {
+    Object* object = newObject(vm, OBJ_INT);
+    object->value = initValue;
+    push(vm, object);
+}
+
+Object* pushPair(VM* vm) {
+    Object* object = newObject(vm, OBJ_PAIR);
+    object->tail = pop(vm);
+    object->head = pop(vm);
+    push(vm, object);
+    return object;
+}
+
+void objectPrint(Object* object) {
+    switch (object->type) {
+        case OBJ_INT:
+            printf("%d\n", object->value);
+            break;
+        case OBJ_PAIR:
+            printf("(");
+            objectPrint(object->head);
+            printf(", ");
+            objectPrint(object->tail);
+            printf(")");
+            break;
+    }
+}
+
+void freeVM(VM* vm) {
+    vm->stackSize = 0;
+    gc(vm);
+    free(vm);
+}
+
 int main(int argc, const char * argv[]) {
 
     // TO DO
