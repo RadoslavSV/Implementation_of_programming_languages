@@ -56,6 +56,38 @@ Object* pop(VM* vm) {
     return vm->stack[--vm->stackSize];
 }
 
+void mark(Object* object) {
+    if (object->marked) {
+        return;
+    }
+    object->marked = 1;
+    if (object->type == OBJ_PAIR) {
+        mark(object->head);
+        mark(object->tail);
+    }
+}
+
+void markAll(VM* vm) {
+    for (int i = 0; i < vm->stackSize; i++) {
+        mark(vm->stack[i]);
+    }
+}
+
+void sweep(VM* vm) {
+    Object** object = &vm->firstObject;
+    while (*object) {
+        if (!(*object)->marked) {
+            Object* unreached = *object;
+            *object = unreached->next;
+            free(unreached);
+            vm->numObjects--;
+        } else {
+            (*object)->marked = 0;
+            object = &(*object)->next;
+        }
+    }
+}
+
 int main(int argc, const char * argv[]) {
 
     // TO DO
