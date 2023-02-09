@@ -76,6 +76,7 @@ end
         files './src/gc_dummy.cpp'
         links 'test_bench'
         setup()
+
     project 'myGarbageCollector'
         kind 'ConsoleApp'
         language 'C++'
