@@ -20,9 +20,10 @@ public:
 
     void VisitReference(Object* from, Object** to, void* state) override
     {
-        if(*to != nullptr)
+        if (*to != nullptr)
         {
             m_Visited.insert(*to);
+            m_Referenced.push_back(*to);
         }
     }
 
@@ -47,6 +48,16 @@ public:
 
             m_Visited.insert(object);
             object->VisitReferences(this, nullptr);
+
+            for (auto ref : m_Referenced)
+            {
+                if (ref != nullptr)
+                {
+                    stack.push(ref);
+                }
+            }
+
+            m_Referenced.clear();
         }
 
         for (auto allocation : m_Allocations)
@@ -62,6 +73,7 @@ private:
     Object** m_Root = nullptr;
     std::unordered_set<Object*> m_Visited;
     std::vector<void*> m_Allocations;
+    std::vector<Object*> m_Referenced;
 };
 
 std::unique_ptr<GarbageCollector> CreateGarbageCollector(int argc, char* argv[])
