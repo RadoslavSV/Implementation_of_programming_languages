@@ -28,7 +28,6 @@ public:
 
     void Shutdown() override
     {
-        std::unordered_set<Object*> visited;
         std::stack<Object*> stack;
 
         if (m_Root != nullptr)
@@ -41,18 +40,18 @@ public:
             auto object = stack.top();
             stack.pop();
 
-            if (visited.count(object) > 0)
+            if (m_Visited.count(object) > 0)
             {
                 continue;
             }
 
-            visited.insert(object);
+            m_Visited.insert(object);
             object->VisitReferences(this, nullptr);
         }
 
         for (auto allocation : m_Allocations)
         {
-            if (visited.count(static_cast<Object*>(allocation)) == 0)
+            if (m_Visited.count(static_cast<Object*>(allocation)) == 0)
             {
                 ::operator delete(allocation);
             }
