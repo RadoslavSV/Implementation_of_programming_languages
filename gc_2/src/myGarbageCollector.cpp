@@ -20,19 +20,28 @@ public:
 
     void VisitReference(Object* from, Object** to, void* state) override
     {
-        m_Visited.insert(*to);
+        if(*to != nullptr)
+        {
+            m_Visited.insert(*to);
+        }
     }
 
     void Shutdown() override
     {
+        (*m_Root)->VisitReferences(this, nullptr);
+        
         for (auto object : m_Visited)
         {
             object->VisitReferences(this, nullptr);
         }
-
+        
         for (auto allocation : m_Allocations)
         {
-            ::operator delete(allocation);
+            auto it = m_Visited.find(static_cast<Object*>(allocation));
+            if (it == m_Visited.end())
+            {
+                ::operator delete(allocation);
+            }
         }
     }
 
