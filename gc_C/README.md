@@ -1,5 +1,7 @@
 Implement a simple garbage collector algorithm in C.
+
 An implementation of a virtual machine that runs a garbage-collected heap. 
+
 The heap is implemented as a linked list of objects, and the GC algorithm uses a mark-and-sweep method.
 
 What is used in the code:
