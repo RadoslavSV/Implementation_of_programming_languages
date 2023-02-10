@@ -28,17 +28,31 @@ public:
 
     void Shutdown() override
     {
-        (*m_Root)->VisitReferences(this, nullptr);
-        
-        for (auto object : m_Visited)
+        std::unordered_set<Object*> visited;
+        std::stack<Object*> stack;
+
+        if (m_Root != nullptr)
         {
+            stack.push(*m_Root);
+        }
+
+        while (!stack.empty())
+        {
+            auto object = stack.top();
+            stack.pop();
+
+            if (visited.count(object) > 0)
+            {
+                continue;
+            }
+
+            visited.insert(object);
             object->VisitReferences(this, nullptr);
         }
-        
+
         for (auto allocation : m_Allocations)
         {
-            auto it = m_Visited.find(static_cast<Object*>(allocation));
-            if (it == m_Visited.end())
+            if (visited.count(static_cast<Object*>(allocation)) == 0)
             {
                 ::operator delete(allocation);
             }
